@@ -222,8 +222,8 @@ ifeq ($(DEBUG), 1)
    CFLAGS += -O0 -g -DDEBUG
    CXXFLAGS += -O0 -g -DDEBUG
 else ifeq ($(platform), emscripten)
-   CFLAGS += -O2
-   CXXFLAGS += -O2
+   CFLAGS += -O3
+   CXXFLAGS += -O3
 else
    CFLAGS += -Ofast -DNDEBUG
    CXXFLAGS += -Ofast -DNDEBUG
@@ -257,10 +257,7 @@ CXXFLAGS += -Wall -D__LIBRETRO__ $(fpic) $(INCFLAGS)
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-ifeq ($(platform), emscripten)
-	@$(if $(Q), $(shell echo echo LD $@),)
-	$(CXX) $(fpic) -r $(SHARED) -o $@ $(OBJECTS) $(LIBS) $(LDFLAGS)
-else ifeq ($(STATIC_LINKING), 1)
+ifeq ($(STATIC_LINKING), 1)
 	$(AR) rcs $@ $(OBJECTS)
 else
 	@$(if $(Q), $(shell echo echo LD $@),)
