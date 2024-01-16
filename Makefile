@@ -142,6 +142,7 @@ else ifneq (,$(findstring qnx,$(platform)))
 else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_emscripten.bc
    fpic := -fPIC
+   AR=emar
    SHARED :=
    CFLAGS += -DSYNC_CDROM=1
    CXXFLAGS += -DSYNC_CDROM=1
@@ -245,7 +246,7 @@ ifneq ($(GIT_VERSION)," unknown")
 endif
 
 CFLAGS += -DHAVE_ZLIB -D_7ZIP_ST -DHAVE_FLAC -DUSE_LIBRETRO_VFS
-CXXFLAGS += -std=c++11 -fno-exceptions -fno-rtti -DUSE_LIBRETRO_VFS
+CXXFLAGS += -std=c++14 -fno-exceptions -fno-rtti -DUSE_LIBRETRO_VFS
 
 include Makefile.common
 
