@@ -122,6 +122,7 @@ else
 endif
   CFLAGS       += $(MINVERSION)
   CXXFLAGS     += $(MINVERSION)
+  LDFLAGS      += $(MINVERSION)
 
 else ifeq ($(platform), tvos-arm64)
    TARGET := $(TARGET_NAME)_libretro_tvos.dylib
@@ -134,6 +135,10 @@ ifeq ($(IOSSDK),)
 endif
    CC  = cc -arch arm64  -isysroot $(IOSSDK)
    CXX = c++ -arch arm64 -isysroot $(IOSSDK)
+   MINVERSION    = -mappletvos-version-min=11.0
+   CFLAGS       += $(MINVERSION)
+   CXXFLAGS     += $(MINVERSION)
+   LDFLAGS      += $(MINVERSION)
 
 else ifneq (,$(findstring qnx,$(platform)))
 	TARGET := $(TARGET_NAME)_libretro_qnx.so
@@ -214,7 +219,11 @@ else
    HAVE_CDROM := 1
    USE_LTO := 1
    TARGET := $(TARGET_NAME)_libretro.dll
-   SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=$(CORE_DIR)/link.T -Wl,--no-undefined
+   SHARED := -shared -static-libgcc -static-libstdc++
+   ifneq ($(DEBUG), 1)
+   SHARED += -s
+   endif  
+   SHARED += -Wl,--version-script=$(CORE_DIR)/link.T -Wl,--no-undefined
 endif
 
 LDFLAGS += $(LIBM)
@@ -245,8 +254,8 @@ ifneq ($(GIT_VERSION)," unknown")
 	CXXFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
 endif
 
-CFLAGS += -DHAVE_ZLIB -D_7ZIP_ST -DHAVE_FLAC -DUSE_LIBRETRO_VFS
-CXXFLAGS += -std=c++14 -fno-exceptions -fno-rtti -DUSE_LIBRETRO_VFS
+CFLAGS += -fno-ident -DHAVE_ZLIB -DZ7_ST -DHAVE_FLAC -DZSTD_DISABLE_ASM -DUSE_LIBRETRO_VFS
+CXXFLAGS += -std=c++14 -fno-exceptions -fno-rtti -fno-ident -DHAVE_ZLIB -DZ7_ST -DHAVE_FLAC -DZSTD_DISABLE_ASM -DUSE_LIBRETRO_VFS
 
 include Makefile.common
 
